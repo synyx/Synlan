@@ -11,5 +11,8 @@
     "url": "git@gitlab.synyx.de:ochs/Synlan.git"
   },
   "author": "Pascal Ochs",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "promise": "^8.0.1"
+  }
 }

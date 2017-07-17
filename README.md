@@ -20,9 +20,28 @@ npm install
 ```
 
 
+## Configuration
+
+Before running, the application must be configured.
+To configure the application, open the json file 'general.json' under 'src/config'
+
+```
+"IPAM" : {
+    "host" : "ipam.domain.test",
+    "port" : 80,
+    "path" : "/index.php?i=list_all",
+    "method" : "GET",
+    "headers" : {
+      "Accept" : "application/json"
+    }
+}
+```
+
+
+
 ## Usage
 
-After finishing the installation, run the application with following command:
+After finishing the configuration, run the application with following command:
 
 
 ```

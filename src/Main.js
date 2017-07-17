@@ -1,3 +1,9 @@
+var ConfigService   = require('./service/ConfigService');
+var DataService     = require('./service/DataService');
+
 console.log('Starting application...');
 
-ConfigService.generateConfig();
+
+var config = ConfigService.generateConfig();
+
+DataService.generateData(config);
