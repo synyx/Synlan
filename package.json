@@ -13,6 +13,7 @@
   "author": "Pascal Ochs",
   "license": "MIT",
   "dependencies": {
-    "promise": "^8.0.1"
+    "promise": "^8.0.1",
+    "snmp-native": "^1.1.1"
   }
 }

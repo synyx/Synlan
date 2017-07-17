@@ -8,6 +8,31 @@
     "headers" : {
       "Accept" : "application/json"
     }
+  },
+
+  "SNMP" : {
+    "switches" : [
+      {
+        "name" : "switch1",
+        "url" : "switch1.domain.test",
+        "ip" : "0.0.0.0",
+        "ports" : 48,
+        "trunkPorts": 2,
+        "snmp_secret" : "public",
+        "snmp_oid" : [0,0,0,0,0,0,0,0,0,0,0],
+        "snmp_oid_string" : "0,0,0,0,0,0,0,0,0,0,0,"
+      },
+      {
+        "name" : "switch2",
+        "url" : "switch2.domain.test",
+        "ip" : "0.0.0.0",
+        "ports" : 48,
+        "trunkPorts": 2,
+        "snmp_secret" : "public",
+        "snmp_oid" : [0,0,0,0,0,0,0,0,0,0,0],
+        "snmp_oid_string" : "0,0,0,0,0,0,0,0,0,0,0,"
+      }
+    ]
   }
 
 }
