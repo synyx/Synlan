@@ -82,6 +82,7 @@ var DataService = {
                             dezMac     = dezMac.replace(_switch.snmp_oid_string, '');
                             data.push({
                                 'dezMac' : dezMac,
+                                'mac'    : convertDezMacToHex(dezMac),
                                 'port'   : port,
                                 'type'   : vb.type,
                                 'switch' : _switch.name
@@ -101,3 +102,24 @@ var DataService = {
 };
 
 module.exports = DataService;
+
+/**
+ * Converts dezimal MAC-Address into Hexadezimal Mac-Adresse.
+ * @param dezMac
+ * @returns {string}
+ */
+function convertDezMacToHex (dezMac) {
+
+    var dezMacArr = dezMac.split(',');
+    var mac = '';
+    dezMacArr.forEach(function (num) {
+        num = parseInt(num);
+        if(num < 16) {
+            mac += '0'
+        }
+        mac += num.toString(16);
+    });
+    mac = mac.match( /.{1,2}/g )
+        .join(':');
+    return mac;
+}
