@@ -1,0 +1,15 @@
+{
+  "name": "synlan",
+  "version": "1.0.0",
+  "description": "Network Tool",
+  "main": "Main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.synyx.de:ochs/Synlan.git"
+  },
+  "author": "Pascal Ochs",
+  "license": "MIT"
+}
