@@ -19,6 +19,8 @@ Installing all required node modules:
 npm install
 ```
 
+The last installation step is to download the graphdatabase Neo4j and to install it.
+
 
 ## Configuration
 
@@ -62,6 +64,15 @@ To configure the application, open the json file 'general.json' under 'src/confi
         "snmp_oid_string" : "0,0,0,0,0,0,0,0,0,0,0,"
         }
     ]
+}
+```
+
+To set the Neo4j graphdatabase url, open the json file 'neo4j.json' under 'src/config'.
+Replace username and password.
+
+```
+{
+  "url" : "http://username:password@localhost:7474/"
 }
 ```
 

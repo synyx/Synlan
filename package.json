@@ -13,6 +13,7 @@
   "author": "Pascal Ochs",
   "license": "MIT",
   "dependencies": {
+    "node-neo4j": "^2.0.3",
     "promise": "^8.0.1",
     "snmp-native": "^1.1.1"
   }
