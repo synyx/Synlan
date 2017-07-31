@@ -8,6 +8,7 @@ var ConfigService = {
 
         config['general']   = ConfigService.getGeneralConfig();
         config['neo4j']     = ConfigService.getNeo4jConfig();
+        config['locations'] = ConfigService.getLocationConfig();
 
         return config;
     },
@@ -18,6 +19,10 @@ var ConfigService = {
 
     getNeo4jConfig : function () {
         return JSON.parse(fs.readFileSync('./config/neo4j.json', 'utf8'));
+    },
+
+    getLocationConfig : function () {
+        return JSON.parse(fs.readFileSync('./config/locations.json', 'utf8'));
     }
 };
 

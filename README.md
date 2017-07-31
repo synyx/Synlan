@@ -76,6 +76,42 @@ Replace username and password.
 }
 ```
 
+To set configure locations, open the json file 'locations.json' under 'src/config'.
+
+```
+{
+
+  "locationsList" : [
+    "Raum1",
+    "Raum2"
+  ],
+
+  "locationPorts" : [
+    {
+      "name" : "A1",
+      "room" : "Raum1",
+      "switch" : "switch1",
+      "switchUrl" : "switch1.domain.test",
+      "port": 10
+    },
+    {
+      "name" : "B1",
+      "room" : "Raum2",
+      "switch" : "switch1",
+      "switchUrl" : "switch1.domain.test",
+      "port": 11
+    },
+    {
+      "name" : "B2",
+      "room" : "Raum2",
+      "switch" : "switch2",
+      "switchUrl" : "switch2.domain.test",
+      "port": 10
+    }
+  ]
+}
+```
+
 
 ## Usage
 
