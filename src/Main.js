@@ -5,6 +5,7 @@ var ConfigService   = require('./service/ConfigService');
 var DataService     = require('./service/DataService');
 var SwitchService   = require('./service/SwitchService');
 var LocationService = require('./service/LocationService');
+var DeviceService   = require('./service/DeviceService');
 
 
 console.log('Starting application...');
@@ -34,5 +35,15 @@ DataService.generateData(config)
         return LocationService.initLocationService({
             'neo4j'     : neo4jDb,
             'locations' : config.locations
+        });
+    })
+
+    .then(function () {
+        return DeviceService.initDeviceService({
+            'neo4j'         : neo4jDb,
+            'devices_SNMP'  : networkData.SNMP,
+            'devices_IPAM'  : networkData.IPAM,
+            'switches'      : config.general.SNMP.switches,
+            'trunkports'    : config.trunkports
         });
     });

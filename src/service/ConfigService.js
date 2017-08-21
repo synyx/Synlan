@@ -6,9 +6,10 @@ var ConfigService = {
 
         var config = {};
 
-        config['general']   = ConfigService.getGeneralConfig();
-        config['neo4j']     = ConfigService.getNeo4jConfig();
-        config['locations'] = ConfigService.getLocationConfig();
+        config['general']    = ConfigService.getGeneralConfig();
+        config['neo4j']      = ConfigService.getNeo4jConfig();
+        config['locations']  = ConfigService.getLocationConfig();
+        config['trunkports'] = ConfigService.getTrunkportConfig();
 
         return config;
     },
@@ -23,6 +24,10 @@ var ConfigService = {
 
     getLocationConfig : function () {
         return JSON.parse(fs.readFileSync('./config/locations.json', 'utf8'));
+    },
+
+    getTrunkportConfig : function () {
+        return JSON.parse(fs.readFileSync('./config/trunkports.json', 'utf8'));
     }
 };
 

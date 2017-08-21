@@ -1,0 +1,17 @@
+[
+  {
+    "switch" : "{SWITCH_NAME}",
+    "trunkPort" : "{TRUNKPORT}",
+    "secondSwitch" : "{SECOND_SWITCH}"
+  },
+  {
+    "switch" : "{SWITCH_NAME}",
+    "trunkPort" : "{TRUNKPORT}",
+    "secondSwitch" : "{SECOND_SWITCH}"
+  },
+  {
+    "switch" : "{SWITCH_NAME}",
+    "trunkPort" : "{TRUNKPORT}",
+    "secondSwitch" : "{SECOND_SWITCH}"
+  }
+]
