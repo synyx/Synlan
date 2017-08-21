@@ -2,32 +2,52 @@
 
 Synlan is an Application to collect Network informations and save it into an graph database.
 
+1. [Installation](#installation)
+  1. [Node](#node)
+  1. [Neo4j](#neo4j)
+2. [Configuration](#configuration)
+  2. [general.json](#generaljson)
+  2. [neo4j.json](#neo4jjson)
+  2. [locations.json](#locationsjson)
+  2. [server.json](#serverjson)
+  2. [trunkports.json](#trunkportsjson)
+3. [Usage](#usage)
+4. [API](#api)
+
 ## Installation
 
-Synlan is running with Node.js, to execute the application 'NPM' is required.
-Initialize NPM in Project folder:
+### Node
 
-```
-npm init
-```
+Some modules are required to run the application, you need first to install them.<br />
+Required modules are written in the package.json under 'dependencies'.<br />
+To Install all required node modules execute in the project folder following command:
 
-Some modules are required to run the application, you need first to install them.
-Requires node modules are written in the package.json under 'dependencies'
-Installing all required node modules:
-
-```
-npm install
+```bash
+$ npm install
 ```
 
-The last installation step is to download the graphdatabase Neo4j and to install it.
+### Neo4j
 
+The last installation step is to download the graphdatabase Neo4j and to install it.<br />
+You can download neo4j [here](https://neo4j.com/download/).
 
 ## Configuration
 
-Before running, the application must be configured.
-To configure the application, open the json file 'general.json' under 'src/config'
+Before running, the application must be configured.<br />
+All config files are located under following path: 
 
 ```
+src/configs/
+```
+
+### general.json
+
+**IPAM**
+
+IPAM (IP Adress Management) tool, used to resolve mac-addresses.
+
+Config example:
+```javascript
 "IPAM" : {
     "host" : "ipam.domain.test",
     "port" : 80,
@@ -39,8 +59,19 @@ To configure the application, open the json file 'general.json' under 'src/confi
 }
 ```
 
-
+Example of expected return value:
+```javascript
+{
+    "hostname": "host",
+    "mac": "78:92:9C:46:B5:14",
+    "ip": "0.0.0.0"
+}
 ```
+
+**SNMP**
+
+example:
+```javascript
 "SNMP" : {
     "switches" : [
         {
@@ -67,43 +98,47 @@ To configure the application, open the json file 'general.json' under 'src/confi
 }
 ```
 
+### neo4j.json
+
 To set the Neo4j graphdatabase url, open the json file 'neo4j.json' under 'src/config'.
 Replace username and password.
 
-```
+example:
+```javascript
 {
   "url" : "http://username:password@localhost:7474/"
 }
 ```
 
-To set configure locations, open the json file 'locations.json' under 'src/config'.
+### locations.json
 
-```
+example:
+```javascript
 {
 
   "locationsList" : [
-    "Raum1",
-    "Raum2"
+    "room1",
+    "room2"
   ],
 
   "locationPorts" : [
     {
       "name" : "A1",
-      "room" : "Raum1",
+      "room" : "room1",
       "switch" : "switch1",
       "switchUrl" : "switch1.domain.test",
       "port": 10
     },
     {
       "name" : "B1",
-      "room" : "Raum2",
+      "room" : "room2",
       "switch" : "switch1",
       "switchUrl" : "switch1.domain.test",
       "port": 11
     },
     {
       "name" : "B2",
-      "room" : "Raum2",
+      "room" : "room2",
       "switch" : "switch2",
       "switchUrl" : "switch2.domain.test",
       "port": 10
@@ -112,12 +147,46 @@ To set configure locations, open the json file 'locations.json' under 'src/confi
 }
 ```
 
+### server.json
+
+example:
+```javascript
+{
+  "updateInterval" : 3
+}
+```
+
+### trunkports.json
+
+example:
+```javascript
+[
+  {
+    "switch" : "switch1",
+    "trunkPort" : 48,
+    "secondSwitch" : "switch2"
+  },
+  {
+    "switch" : "switch2",
+    "trunkPort" : 48,
+    "secondSwitch" : "switch1"
+  }
+]
+```
 
 ## Usage
 
-After finishing the configuration, run the application with following command:
+After finishing the configuration, go under following path:
+
+```bash
+src/
+```
+
+run the application with following command:
 
 
+```bash
+$ node Server.js
 ```
-node Main.js
-```
+
+## API
