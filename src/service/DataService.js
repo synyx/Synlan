@@ -13,12 +13,14 @@ var DataService = {
             DataService.getIPAMData(config)
                 .then(function (IPAM) {
                     data['IPAM'] = IPAM;
+                    return Promise.resolve();
                 })
                 .then(function () {
                     return DataService.getSNMPData(config);
                 })
                 .then(function (SNMP) {
                     data['SNMP'] = SNMP;
+                    return Promise.resolve();
                 })
                 .then(function () {
                     resolve(data);

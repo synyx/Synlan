@@ -3,23 +3,28 @@ var Promise = require('promise');
 var neo4j;
 var locationsList;
 var locationPorts;
+var transactionId;
+var transactionStatements = [];
 
 var LocationService = {
 
     initLocationService : function (config) {
 
         neo4j           = config.neo4j;
+        transactionId   = config.transactionId;
         locationsList   = config.locations.locationsList;
         locationPorts   = config.locations.locationPorts;
 
         return new Promise(function (resolve) {
-            LocationService.deleteLocationNodes()
-                .then(LocationService.createLocationNodes)
-                .then(LocationService.deleteLocationPorts)
-                .then(LocationService.createLocationPorts)
-                .then(LocationService.createRoomConnection)
-                .then(LocationService.createLocationSwitchConnection)
-                .then(resolve);
+
+            LocationService.deleteLocationNodes();
+            LocationService.createLocationNodes();
+            LocationService.deleteLocationPorts();
+            LocationService.createLocationPorts();
+            LocationService.createRoomConnection();
+            LocationService.createLocationSwitchConnection();
+            LocationService.addStatementsToTransaction()
+                           .then(resolve);
         });
     },
 
@@ -29,12 +34,8 @@ var LocationService = {
         var query = 'MATCH (location:Location) ' +
                     'DETACH DELETE location;';
 
-        return new Promise(function (resolve) {
-            neo4j.cypherQuery(query, function (err) {
-                if(err) throw err;
-                console.log('Deleted all locations');
-                resolve();
-            });
+        transactionStatements.push({
+            statement: query
         });
     },
 
@@ -43,23 +44,14 @@ var LocationService = {
 
         var query = 'MERGE (location:Location {name: "{LOCATION_NAME}"}) ' +
                     'RETURN location';
-        var queryCounter = 0;
 
-        return new Promise(function (resolve) {
+        locationsList.forEach(function (location) {
 
-            locationsList.forEach(function (location) {
+            var _query = query;
+                _query = _query.replace('{LOCATION_NAME}', location);
 
-                var _query = query;
-                    _query = _query.replace('{LOCATION_NAME}', location);
-
-                neo4j.cypherQuery(_query, function (err) {
-                    if(err) throw err;
-                    queryCounter++;
-                    if (queryCounter == locationsList.length) {
-                        console.log('Created all locations');
-                        resolve();
-                    }
-                })
+            transactionStatements.push({
+                statement: _query
             });
         });
     },
@@ -70,13 +62,8 @@ var LocationService = {
         var query = 'MATCH (locationPort:LocationPort) ' +
                     'DETACH DELETE locationPort;';
 
-        return new Promise(function (resolve) {
-
-            neo4j.cypherQuery(query, function (err) {
-                if(err) throw err;
-                console.log('Deleted all location ports');
-                resolve();
-            });
+        transactionStatements.push({
+            statement: query
         });
     },
 
@@ -91,26 +78,16 @@ var LocationService = {
                     '}) ' +
                     'RETURN locationPort;';
 
-        var queryCounter = 0;
+        locationPorts.forEach(function (locationPort) {
 
-        return new Promise(function (resolve) {
+            var _query = query;
+                _query = _query.replace('{LOCATIONPORT_NAME}',locationPort.name);
+                _query = _query.replace('{LOCATIONPORT_ROOM}',locationPort.room);
+                _query = _query.replace('{LOCATIONPORT_SWITCH}',locationPort.switch);
+                _query = _query.replace('{LOCATIONPORT_PORT}',locationPort.port);
 
-            locationPorts.forEach(function (locationPort) {
-
-                var _query = query;
-                    _query = _query.replace('{LOCATIONPORT_NAME}',locationPort.name);
-                    _query = _query.replace('{LOCATIONPORT_ROOM}',locationPort.room);
-                    _query = _query.replace('{LOCATIONPORT_SWITCH}',locationPort.switch);
-                    _query = _query.replace('{LOCATIONPORT_PORT}',locationPort.port);
-
-                neo4j.cypherQuery(_query, function (err) {
-                    if(err) throw err;
-                    queryCounter++;
-                    if(queryCounter == locationPorts.length) {
-                        console.log('Created all location ports');
-                        resolve();
-                    }
-                });
+            transactionStatements.push({
+                statement: _query
             });
         });
     },
@@ -126,25 +103,15 @@ var LocationService = {
                     '}) ' +
                     'MERGE (locationPort)-[:ROOM]->(location) ' +
                     'RETURN locationPort;';
-        var queryCounter = 0;
 
+        locationsList.forEach(function (location) {
 
-        return new Promise(function (resolve) {
+            var _query = query;
+                _query = _query.replace('{LOCATIONPORT_ROOM_NAME}', location);
+                _query = _query.replace('{LOCATION_NAME}', location);
 
-            locationsList.forEach(function (location) {
-
-                var _query = query;
-                    _query = _query.replace('{LOCATIONPORT_ROOM_NAME}', location);
-                    _query = _query.replace('{LOCATION_NAME}', location);
-
-                neo4j.cypherQuery(_query, function (err) {
-                    if (err) throw err;
-                    queryCounter++;
-                    if(queryCounter == locationsList.length) {
-                        console.log('Created connection between location ports and locations');
-                        resolve();
-                    }
-                });
+            transactionStatements.push({
+                statement: _query
             });
         });
     },
@@ -160,15 +127,23 @@ var LocationService = {
                     'MERGE (switchPortRoom)-[:CONNECTED]->(locationPort) ' +
                     'RETURN switch, switchPort, switchPortRoom, locationPort;';
 
-        return new Promise(function (resolve) {
+        transactionStatements.push({
+            statement: query
+        });
+    },
 
-            neo4j.cypherQuery(query, function (err) {
+
+    addStatementsToTransaction : function () {
+        return new Promise(function (resolve) {
+            var _statements = {
+                statements: transactionStatements
+            };
+            neo4j.addStatementsToTransaction(transactionId, _statements, function (err) {
                 if(err) throw err;
-                console.log('Created location port to switch relation');
+                console.log('[LocationService.js] Added all statements to transaction');
                 resolve();
             });
         });
-
     }
 };
 

@@ -6,6 +6,8 @@ var switches;
 var trunkPorts;
 var neo4j;
 var mappedDevices;
+var transactionId;
+var transactionStatements = [];
 
 var DeviceService = {
 
@@ -16,6 +18,7 @@ var DeviceService = {
         switches        = config.switches;
         trunkPorts      = config.trunkports;
         neo4j           = config.neo4j;
+        transactionId   = config.transactionId;
 
         mappedDevices = deviceFilter.IPAM_SNMP_Mapper           (devices_IPAM, devices_SNMP);
         mappedDevices = deviceFilter.unknownDeviceMapper        (devices_SNMP, mappedDevices);
@@ -24,12 +27,13 @@ var DeviceService = {
 
         return new Promise(function (resolve) {
 
-            DeviceService.createDeviceNodes()
-                .then(DeviceService.createDevicePorts)
-                .then(DeviceService.createLocationConnection)
-                .then(DeviceService.createUnknownLocationPort)
-                .then(DeviceService.createDeviceSwitchConnection)
-                .then(resolve);
+            DeviceService.createDeviceNodes();
+            DeviceService.createDevicePorts();
+            DeviceService.createLocationConnection();
+            DeviceService.createUnknownLocationPort();
+            DeviceService.createDeviceSwitchConnection();
+            DeviceService.addStatementsToTransaction()
+                         .then(resolve);
         });
     },
 
@@ -49,34 +53,25 @@ var DeviceService = {
                         'device.switch = "{MATCH_DEVICE_SWITCH}", ' +
                         'device.timestamp = "{MATCH_DEVICE_TIMESTAMP}" ' +
                     'RETURN device;';
-        var queryCounter = 0;
         var date = new Date();
 
-        return new Promise(function (resolve) {
+        mappedDevices.forEach(function (device) {
 
-            mappedDevices.forEach(function (device) {
+            var timestamp = date.getTime().toString();
+            var _query = query;
+                _query = _query.replace('{DEVICE_NAME}', device.hostname);
+                _query = _query.replace('{DEVICE_MAC}', device.mac);
 
-                var timestamp = date.getTime().toString();
-                var _query = query;
-                    _query = _query.replace('{DEVICE_NAME}', device.hostname);
-                    _query = _query.replace('{DEVICE_MAC}', device.mac);
+                _query = _query.replace('{CREATE_DEVICE_PORT}', device.port);
+                _query = _query.replace('{CREATE_DEVICE_SWITCH}', device.switch);
+                _query = _query.replace('{CREATE_DEVICE_TIMESTAMP}', timestamp);
 
-                    _query = _query.replace('{CREATE_DEVICE_PORT}', device.port);
-                    _query = _query.replace('{CREATE_DEVICE_SWITCH}', device.switch);
-                    _query = _query.replace('{CREATE_DEVICE_TIMESTAMP}', timestamp);
+                _query = _query.replace('{MATCH_DEVICE_PORT}', device.port);
+                _query = _query.replace('{MATCH_DEVICE_SWITCH}', device.switch);
+                _query = _query.replace('{MATCH_DEVICE_TIMESTAMP}', timestamp);
 
-                    _query = _query.replace('{MATCH_DEVICE_PORT}', device.port);
-                    _query = _query.replace('{MATCH_DEVICE_SWITCH}', device.switch);
-                    _query = _query.replace('{MATCH_DEVICE_TIMESTAMP}', timestamp);
-
-                neo4j.cypherQuery(_query, function (err) {
-                    if(err) throw err;
-                    queryCounter++;
-                    if (queryCounter == mappedDevices.length) {
-                        console.log('Created all device nodes');
-                        resolve();
-                    }
-                })
+            transactionStatements.push({
+                statement: _query
             });
         });
     },
@@ -91,13 +86,8 @@ var DeviceService = {
                     '}) ' +
                     'RETURN device, devicePort;';
 
-        return new Promise(function (resolve) {
-
-            neo4j.cypherQuery(query, function (err) {
-                if(err) throw err;
-                console.log('Created device port nodes');
-                resolve();
-            });
+        transactionStatements.push({
+            statement: query
         });
     },
 
@@ -112,13 +102,8 @@ var DeviceService = {
                     'CREATE (locationPort)-[:CONNECTED]->(devicePort) ' +
                     'RETURN locationPort, device, devicePort;';
 
-        return new Promise(function (resolve) {
-
-            neo4j.cypherQuery(query, function (err) {
-                if(err) throw err;
-                console.log('Created location connection');
-                resolve();
-            });
+        transactionStatements.push({
+            statement: query
         });
     },
 
@@ -132,13 +117,8 @@ var DeviceService = {
                     '})-[:CONNECTED]->(devicePort) ' +
                     'RETURN devicePort, locationPort;';
 
-        return new Promise(function (resolve) {
-
-            neo4j.cypherQuery(query, function (err) {
-                if(err) throw err;
-                console.log('Created unknown location port nodes');
-                resolve();
-            });
+        transactionStatements.push({
+            statement: query
         });
     },
 
@@ -153,11 +133,20 @@ var DeviceService = {
                     'CREATE (switchPortRoom)-[:CONNECTED]->(locationPort) ' +
                     'RETURN switch, switchPort, switchPortRoom, locationPort, devicePort, device;';
 
-        return new Promise(function (resolve) {
+        transactionStatements.push({
+            statement: query
+        });
+    },
 
-            neo4j.cypherQuery(query, function (err) {
+
+    addStatementsToTransaction : function () {
+        return new Promise(function (resolve) {
+            var _statements = {
+                statements: transactionStatements
+            };
+            neo4j.addStatementsToTransaction(transactionId, _statements, function (err) {
                 if(err) throw err;
-                console.log('Connected device part to switch part:');
+                console.log('[DeviceService.js] Added all statements to transaction');
                 resolve();
             });
         });
