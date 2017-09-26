@@ -14,33 +14,34 @@ var ApiController = {
             console.log('Example app listening on port 3000!');
         });
 
-        ApiController.host();
+        ApiController.location();
     },
 
-    
-    host: function () {
+
+    location: function () {
 
         var query = 'match path = shortestPath( (device:Device {name:"{DEVICE_NAME}"})-[*..]-(switch:Switch)) ' +
                     'WHERE switch.name = device.switch ' +
-                    'return path;';
-        var query2 = 'MATCH (n) RETURN n;';
+                    'WITH NODES(path) AS nodes ' +
+                    'UNWIND nodes AS n ' +
+                    'RETURN n AS nodes, labels(n) AS labels;';
 
-        app.get('/host', function (req, res) {
+        app.get('/location', function (req, res) {
 
             if(req.query.hostname) {
                 var _query;
                 _query = query.replace('{DEVICE_NAME}', req.query.hostname);
 
                 db.cypherQuery(_query, function (err, result) {
-                    if (err) throw err;
-                    result = mapResult(result);
-                    res.send(result);
+                    if (err) {
+                        res.send('Database Error');
+                    } else {
+                        result = mapResult(result);
+                        res.send(result);
+                    }
                 });
             } else {
-                db.cypherQuery(query2, function (err, result) {
-                    if (err) throw err;
-                    res.send(result);
-                });
+               res.send('Invalid request.');
             }
         });
     }
@@ -48,23 +49,15 @@ var ApiController = {
 
 
 function mapResult (result) {
-
-    var data = result.data[0];
-    var nodes = data.nodes;
-    var output = '';
-
-    nodes.forEach(function (node, i) {
-        output += '(' + node + ')';
-        if(data.directions[i] === '<-') {
-            output += data.directions[i];
-            output += '[' + data.relationships[i] + ']-';
-        }
-        if(data.directions[i] === '->') {
-            output += '-[' + data.relationships[i] + ']';
-            output += data.directions[i];
-        }
+    var newResult = [];
+    var nodes = result['data'];
+    nodes.forEach(function (node) {
+        var obj = node[0];
+        obj.type = node[1][0];
+        delete obj['_id'];
+        newResult.push(obj);
     });
-    return output;
+    return newResult;
 }
 
 module.exports = ApiController;
