@@ -48,7 +48,7 @@ var DataService = {
                     data += chunk;
                 });
                 res.on('end', function () {
-                    console.log('Finished loading all devices from IPAM');
+                    console.log('[DataService.js] Finished loading from IPAM');
                     resolve(data);
                 });
             });
@@ -76,7 +76,7 @@ var DataService = {
                 session.getSubtree({ oid: _switch.snmp_oid }, function (error, varbinds) {
 
                     if (error) {
-                        console.log('Failed to load snmp informations from switch: ' + _switch.name);
+                        console.log('[DataService.js] Failed to load SNMP informations from switch: ' + _switch.name);
                     } else {
                         varbinds.forEach(function (vb) {
                             var dezMac = '' + vb.oid;
@@ -93,7 +93,7 @@ var DataService = {
                         session.close();
                         counter++;
                         if(counter === switches.length){
-                            console.log('Loaded all Macs and Ports from SNMP');
+                            console.log('[DataService.js] Finished loading all Macs and Ports from SNMP');
                             resolve(data);
                         }
                     }
