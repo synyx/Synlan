@@ -39,9 +39,16 @@ var DataService = {
         return new Promise (function (resolve) {
 
             var data = [];
-            var ipam = config.general.IPAM;
 
-            http.get(ipam, function (res) {
+            http.get({
+                "host" : config.general.host,
+                "path" : config.general.path,
+                "port" : 80,
+                "method" : "GET",
+                "headers" : {
+                    "Accept" : "application/json"
+                }
+            }, function (res) {
 
                 res.setEncoding('utf8');
                 res.on('data', function (chunk) {
@@ -66,14 +73,13 @@ var DataService = {
         var counter = 0;
         var switches = config.general.SNMP.switches;
 
-
         return new Promise(function (resolve) {
 
             switches.forEach(function (_switch) {
 
-                var session = new snmp.Session({ host: _switch.ip, community: _switch.snmp_secret });
+                var session = new snmp.Session({ host: _switch.ip, community: _switch.community });
 
-                session.getSubtree({ oid: _switch.snmp_oid }, function (error, varbinds) {
+                session.getSubtree({ oid: [1,3,6,1,2,1,17,4,3,1,2] }, function (error, varbinds) {
 
                     if (error) {
                         console.log('[DataService.js] Failed to load SNMP informations from switch: ' + _switch.name);
@@ -81,7 +87,7 @@ var DataService = {
                         varbinds.forEach(function (vb) {
                             var dezMac = '' + vb.oid;
                             var port   = vb.value;
-                            dezMac     = dezMac.replace(_switch.snmp_oid_string, '');
+                            dezMac     = dezMac.replace("1,3,6,1,2,1,17,4,3,1,2,", '');
                             data.push({
                                 'dezMac' : dezMac,
                                 'mac'    : convertDezMacToHex(dezMac),

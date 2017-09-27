@@ -50,13 +50,8 @@ Config example:
 ```javascript
 "IPAM" : {
     "host" : "ipam.domain.test",
-    "port" : 80,
-    "path" : "/index.php?i=list_all",
-    "method" : "GET",
-    "headers" : {
-      "Accept" : "application/json"
-    }
-}
+    "path" : "/index.php?i=list_all"
+  }
 ```
 
 Example of expected return value:
@@ -75,24 +70,20 @@ example:
 "SNMP" : {
     "switches" : [
         {
-        "name" : "switch1",
-        "url" : "switch1.domain.test",
-        "ip" : "0.0.0.0",
-        "ports" : 48,
-        "trunkPorts": 2,
-        "snmp_secret" : "public",
-        "snmp_oid" : [0,0,0,0,0,0,0,0,0,0,0],
-        "snmp_oid_string" : "0,0,0,0,0,0,0,0,0,0,0,"
+            "name" : "switch1",
+            "url" : "switch1.domain.test",
+            "ip" : "0.0.0.0",
+            "ports" : 48,
+            "trunkPorts": 2,
+            "community" : "public"
         },
         {
-        "name" : "switch2",
-        "url" : "switch2.domain.test",
-        "ip" : "0.0.0.0",
-        "ports" : 48,
-        "trunkPorts": 2,
-        "snmp_secret" : "public",
-        "snmp_oid" : [0,0,0,0,0,0,0,0,0,0,0],
-        "snmp_oid_string" : "0,0,0,0,0,0,0,0,0,0,0,"
+            "name" : "switch2",
+            "url" : "switch2.domain.test",
+            "ip" : "0.0.0.0",
+            "ports" : 48,
+            "trunkPorts": 2,
+            "community" : "public"
         }
     ]
 }
