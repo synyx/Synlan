@@ -48,10 +48,7 @@ IPAM (IP Adress Management) tool, used to resolve mac-addresses.
 
 Config example:
 ```javascript
-"IPAM" : {
-    "host" : "ipam.domain.test",
-    "path" : "/index.php?i=list_all"
-  }
+"IPAM" : "ipam.domain.test"
 ```
 
 Example of expected return value:

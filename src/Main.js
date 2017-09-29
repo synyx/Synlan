@@ -58,10 +58,7 @@ function execute () {
             return DeviceService.initDeviceService({
                 'neo4j'         : neo4jDb,
                 'transactionId' : transactionId,
-                'devices_SNMP'  : networkData.SNMP,
-                'devices_IPAM'  : networkData.IPAM,
-                'switches'      : config.general.SNMP.switches,
-                'trunkports'    : config.trunkports
+                'mapped_devices': networkData.MAPPED
             });
         })
 

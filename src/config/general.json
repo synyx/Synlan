@@ -1,9 +1,6 @@
 {
 
-  "IPAM" : {
-    "host" : "ipam.domain.test",
-    "path" : "/index.php?i=list_all"
-  },
+  "IPAM" : "ipam.domain.test",
 
   "SNMP" : {
     "switches" : [

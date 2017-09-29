@@ -16,6 +16,7 @@
     "express": "^4.15.4",
     "node-neo4j": "^2.0.3",
     "promise": "^8.0.1",
-    "snmp-native": "^1.1.1"
+    "snmp-native": "^1.1.1",
+    "mysql": "^2.14.1"
   }
 }

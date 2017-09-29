@@ -1,9 +1,5 @@
 var Promise = require('promise');
 
-var devices_IPAM;
-var devices_SNMP;
-var switches;
-var trunkPorts;
 var neo4j;
 var mappedDevices;
 var transactionId;
@@ -13,17 +9,9 @@ var DeviceService = {
 
     initDeviceService : function (config) {
 
-        devices_IPAM    = config.devices_IPAM;
-        devices_SNMP    = config.devices_SNMP;
-        switches        = config.switches;
-        trunkPorts      = config.trunkports;
         neo4j           = config.neo4j;
         transactionId   = config.transactionId;
-
-        mappedDevices = deviceFilter.IPAM_SNMP_Mapper           (devices_IPAM, devices_SNMP);
-        mappedDevices = deviceFilter.unknownDeviceMapper        (devices_SNMP, mappedDevices);
-        mappedDevices = deviceFilter.filterDuplicatedDevices    (switches, mappedDevices);
-        mappedDevices = deviceFilter.filterHigherPorts          (switches, mappedDevices);
+        mappedDevices   = config.mapped_devices;
 
         return new Promise(function (resolve) {
 
@@ -152,93 +140,5 @@ var DeviceService = {
         });
     }
 };
-
-
-var deviceFilter = {
-
-     IPAM_SNMP_Mapper : function (IPAM_Devices, SNMP_Devices) {
-
-        var mappedData = [];
-        var _IPAM_Devices = JSON.parse(IPAM_Devices);
-
-         SNMP_Devices.forEach(function (snmp_device) {
-
-             _IPAM_Devices.forEach(function (ipam_device) {
-
-                if(ipam_device.mac === snmp_device.mac) {
-                    mappedData.push({
-                        'hostname' : ipam_device.hostname,
-                        'ip'       : ipam_device.ip,
-                        'mac'      : ipam_device.mac,
-                        'type'     : ipam_device.type,
-                        'port'     : snmp_device.port,
-                        'switch'   : snmp_device.switch
-                    });
-                }
-            });
-        });
-
-        return mappedData;
-    },
-
-    unknownDeviceMapper : function (SNMP_Devices, mappedDevices) {
-
-        SNMP_Devices.forEach(function (snmp_device) {
-
-            if(checkContainedMac(snmp_device, mappedDevices)) {
-
-                mappedDevices.push({
-                    'hostname' : 'UNKNOWN',
-                    'ip'       : '-',
-                    'mac'      : snmp_device.mac,
-                    'type'     : snmp_device.type,
-                    'port'     : snmp_device.port,
-                    'switch'   : snmp_device.switch
-                });
-            }
-        });
-        return mappedDevices;
-    },
-
-    filterDuplicatedDevices : function (switches, mappedDevices) {
-
-        var trunkPortObj = {};
-        var filteredDevices;
-        switches.forEach(function (_switch) {
-            trunkPorts.forEach(function (trunkPort) {
-                if(trunkPort.switch == _switch.name) {
-                    trunkPortObj[_switch.name + '_' + trunkPort.port] =  true;
-                }
-            });
-        });
-        filteredDevices = mappedDevices.filter(function (mappedDevice) {
-            return !trunkPortObj[mappedDevice.switch + '_' + mappedDevice.port];
-        });
-        return filteredDevices;
-    },
-
-    filterHigherPorts : function (switches, mappedDevices) {
-
-        var trunkPortObj = {};
-        var filteredDevices;
-
-        switches.forEach(function (_switch) {
-            trunkPortObj[_switch.name] = _switch.ports;
-        });
-
-        filteredDevices = mappedDevices.filter(function (device) {
-            return trunkPortObj[device.switch] >= device.port;
-        });
-        return filteredDevices;
-    }
-};
-
-function checkContainedMac (data, mappedData) {
-    var check;
-    check = mappedData.filter(function (_data) {
-        return _data.mac === data.mac;
-    });
-    return check.length === 0;
-}
 
 module.exports = DeviceService;
