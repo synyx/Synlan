@@ -13,6 +13,7 @@ Synlan is an Application to collect Network informations and save it into an gra
   2. [trunkports.json](#trunkportsjson)
 3. [Usage](#usage)
 4. [API](#api)
+    4. [Device Location](#device-location)
 
 ## Installation
 
@@ -178,3 +179,59 @@ $ node Server.js
 ```
 
 ## API
+
+After starting the Server.js a Server is is listening under port 3000.
+
+### Device location
+
+You can get the location of an devices by using following url: 
+
+```
+localhost:3000/location?hostname=<hostname>
+```
+
+Example response:
+
+```javascript
+[
+    {
+        port: "8",
+        name: "host1",
+        mac: "78:92:9C:46:B5:14",
+        timestamp: "1507116994633",
+        switch: "switch1",
+        type: "Device"
+    },
+    {
+        name: "LAN / WLAN",
+        type: "DevicePort"
+    },
+    {
+        port: "10",
+        name: "A1",
+        room: "room1",
+        switch: "switch1",
+        type: "LocationPort"
+    },
+    {
+        name: "Network",
+        type: "SwitchPortRoom"
+    },
+    {
+        name: "8",
+        type: "SwitchPort"
+    },
+    {
+        address: "switch1.domain.test",
+        ip: "0.0.0.0",
+        name: "switch1",
+        url: "switch1.domain.test",
+        timestamp: "1507116994452",
+        type: "Switch"
+    }
+]
+```
+
+The response returns an array starting with a device and ending with a switch.<br />
+The symbolized path looks like:<br />
+(device) <- (devicePort) <- (locationPort) <- (switchPortRoom) <- (SwitchPort) <- (switch)
