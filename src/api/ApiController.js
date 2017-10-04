@@ -15,6 +15,7 @@ var ApiController = {
         });
 
         ApiController.location();
+        ApiController.devices();
     },
 
 
@@ -44,6 +45,31 @@ var ApiController = {
                res.send('Invalid request.');
             }
         });
+    },
+
+    devices : function () {
+
+        var query = 'MATCH (device:Device {name:"{DEVICE_NAME}"}) ' +
+                    'RETURN device;';
+        var query2 = 'MATCH (device:Device) ' +
+                     'RETURN device';
+
+        app.get('/devices', function (req, res) {
+            var _query;
+            if(req.query.name) {
+                _query = query.replace('{DEVICE_NAME}', req.query.name);
+            } else {
+                _query = query2;
+            }
+            db.cypherQuery(_query, function (err, result) {
+                if (err) {
+                    res.send('Database Error');
+                } else {
+                    result = mapDevices(result);
+                    res.send(result);
+                }
+            });
+        });
     }
 };
 
@@ -56,6 +82,16 @@ function mapResult (result) {
         obj.type = node[1][0];
         delete obj['_id'];
         newResult.push(obj);
+    });
+    return newResult;
+}
+
+function mapDevices (result) {
+    var newResult = [];
+    var nodes = result['data'];
+    nodes.forEach(function (node) {
+        delete node['_id'];
+        newResult.push(node);
     });
     return newResult;
 }

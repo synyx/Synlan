@@ -14,6 +14,7 @@ Synlan is an Application to collect Network informations and save it into an gra
 3. [Usage](#usage)
 4. [API](#api)
     4. [Device Location](#device-location)
+    4. [Devices](#devices)
 
 ## Installation
 
@@ -235,3 +236,39 @@ Example response:
 The response returns an array starting with a device and ending with a switch.<br />
 The symbolized path looks like:<br />
 (device) <- (devicePort) <- (locationPort) <- (switchPortRoom) <- (SwitchPort) <- (switch)
+
+### Devices
+
+You can get all devices or filter a single device.
+To get all devices:
+
+```
+localhost:3000/devices
+```
+
+To search a single device:
+
+```
+localhost:3000/devices?name=<hostname>
+```
+
+Example response:
+
+```javascript
+[
+    {
+        port: "45",
+        name: "printer",
+        mac: "00:00:00:00:00:00",
+        timestamp: "1507126009521",
+        switch: "switch1"
+    },
+    {
+        port: "38",
+        name: "pc1",
+        mac: "00:00:00:00:00:00",
+        timestamp: "1507126009521",
+        switch: "switch1"
+    }
+]
+```
