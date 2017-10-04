@@ -15,7 +15,6 @@ function initApi () {
 
 
 function initScript () {
-    setInterval(function () {
-        Main.initMain();
-    }, config.server.updateInterval * 60 * 1000);
+    var interval = config.server.updateInterval;
+    Main.initMain(interval * 60 * 1000);
 }

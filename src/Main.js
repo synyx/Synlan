@@ -15,10 +15,8 @@ var networkData = [];
 var neo4jDb = new neo4j(config.neo4j.url);
 var transactionId = 0;
 
-execute();
 
-
-function execute () {
+function execute (updateInterval) {
 
     DataService.generateData(config)
 
@@ -70,11 +68,17 @@ function execute () {
                     resolve();
                 });
             })
+        })
+        
+        .then(function () {
+            setTimeout(function () {
+                execute();
+            }, updateInterval)
         });
 }
 
 module.exports = {
-    initMain : function () {
-        execute();
+    initMain : function (updateInterval) {
+        execute(updateInterval);
     }
 };
