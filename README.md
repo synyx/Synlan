@@ -50,7 +50,9 @@ IPAM (IP Adress Management) tool, used to resolve mac-addresses.
 
 Config example:
 ```javascript
+{
 "IPAM" : "ipam.domain.test"
+}
 ```
 
 Example of expected return value:
@@ -64,33 +66,39 @@ Example of expected return value:
 
 **SNMP**
 
+Iterates over all configured switches.<br />
+The iteration returns for each switch all current known devices.<br />
+This returns mac-address and port where the device is connected.
+
 example:
 ```javascript
-"SNMP" : {
-    "switches" : [
-        {
-            "name" : "switch1",
-            "url" : "switch1.domain.test",
-            "ip" : "0.0.0.0",
-            "ports" : 48,
-            "trunkPorts": 2,
-            "community" : "public"
-        },
-        {
-            "name" : "switch2",
-            "url" : "switch2.domain.test",
-            "ip" : "0.0.0.0",
-            "ports" : 48,
-            "trunkPorts": 2,
-            "community" : "public"
-        }
-    ]
+{
+    "SNMP" : {
+        "switches" : [
+            {
+                "name" : "switch1",
+                "url" : "switch1.domain.test",
+                "ip" : "0.0.0.0",
+                "ports" : 48,
+                "trunkPorts": 2,
+                "community" : "public"
+            },
+            {
+                "name" : "switch2",
+                "url" : "switch2.domain.test",
+                "ip" : "0.0.0.0",
+                "ports" : 48,
+                "trunkPorts": 2,
+                "community" : "public"
+            }
+        ]
+    }
 }
 ```
 
 ### neo4j.json
 
-To set the Neo4j graphdatabase url, open the json file 'neo4j.json' under 'src/config'.
+To set the Neo4j graphdatabase url, open the json file 'neo4j.json' under 'src/config'.<br />
 Replace username and password.
 
 example:
@@ -101,6 +109,10 @@ example:
 ```
 
 ### locations.json
+
+To add locations, add the location to the locationList.<br />
+After adding the location you can add individual ports for each room.<br />
+If no location and port is given, location is set to UNKNOWN.
 
 example:
 ```javascript
@@ -139,6 +151,10 @@ example:
 
 ### server.json
 
+There is a possibility to change the update interval.<br />
+The interval is the waiting time (in minutes) before the next script run is executed.<br />
+Default update interval is set to 3 minutes.
+
 example:
 ```javascript
 {
@@ -147,6 +163,10 @@ example:
 ```
 
 ### trunkports.json
+
+Configuring trunkports for each switch.<br />
+Add name and port of the switch.<br />
+Add the second switch where the trunk connection goes.<br />
 
 example:
 ```javascript
