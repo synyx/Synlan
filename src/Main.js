@@ -72,7 +72,7 @@ function execute (updateInterval) {
         
         .then(function () {
             setTimeout(function () {
-                execute();
+                execute(updateInterval);
             }, updateInterval)
         });
 }
