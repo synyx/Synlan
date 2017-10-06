@@ -87,7 +87,7 @@ var DeviceService = {
                     'MATCH (devicePort:DevicePort)-[:CONNECTED]->(device:Device) ' +
                     'WHERE device.switch = locationPort.switch ' +
                     'AND device.port = locationPort.port ' +
-                    'CREATE (locationPort)-[:CONNECTED]->(devicePort) ' +
+                    'MERGE (locationPort)-[:CONNECTED]->(devicePort) ' +
                     'RETURN locationPort, device, devicePort;';
 
         transactionStatements.push({
@@ -118,7 +118,7 @@ var DeviceService = {
                     'WHERE locationPort.name = "UNKNOWN" ' +
                     'AND switch.name = device.switch ' +
                     'AND switchPort.name = device.port ' +
-                    'CREATE (switchPortRoom)-[:CONNECTED]->(locationPort) ' +
+                    'MERGE (switchPortRoom)-[:CONNECTED]->(locationPort) ' +
                     'RETURN switch, switchPort, switchPortRoom, locationPort, devicePort, device;';
 
         transactionStatements.push({
