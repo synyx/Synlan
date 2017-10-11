@@ -15,6 +15,7 @@ Synlan is an Application to collect Network informations and save it into an gra
 4. [API](#api)
     4. [Device Location](#device-location)
     4. [Devices](#devices)
+5. [License](#license)
 
 ## Installation
 
@@ -292,3 +293,8 @@ Example response:
     }
 ]
 ```
+
+## License
+
+MIT License
+
