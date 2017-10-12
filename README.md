@@ -2,20 +2,20 @@
 
 Synlan is an Application to collect Network informations and save it into an graph database.
 
-1. [Installation](#installation)
-  1. [Node](#node)
-  1. [Neo4j](#neo4j)
-2. [Configuration](#configuration)
-  2. [general.json](#generaljson)
-  2. [neo4j.json](#neo4jjson)
-  2. [locations.json](#locationsjson)
-  2. [server.json](#serverjson)
-  2. [trunkports.json](#trunkportsjson)
-3. [Usage](#usage)
-4. [API](#api)
-    4. [Device Location](#device-location)
-    4. [Devices](#devices)
-5. [License](#license)
+1. [Installation](#installation)  
+    1.1 [Node](#node)  
+    1.2 [Neo4j](#neo4j)    
+2. [Configuration](#configuration)  
+    2.1 [general.json](#generaljson)  
+    2.2 [neo4j.json](#neo4jjson)  
+    2.3 [locations.json](#locationsjson)  
+    2.4 [server.json](#serverjson)  
+    2.5 [trunkports.json](#trunkportsjson)  
+3. [Usage](#usage)  
+4. [API](#api)  
+    4.1 [Device Location](#device-location)  
+    4.2 [Devices](#devices)  
+5. [License](#license)  
 
 ## Installation
 
