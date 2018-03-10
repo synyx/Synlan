@@ -119,7 +119,12 @@ var deviceFilter = {
 
         var mappedData = [];
 
-        IPAM_Devices = JSON.parse(IPAM_Devices);
+        try {
+            IPAM_Devices = JSON.parse(IPAM_Devices);
+        } catch (error) {
+            IPAM_Devices = {};
+            console.log('[DataService.js] failed parsing IPAM devices');
+        }
 
         SNMP_Devices.forEach(function (snmp_device) {
 
