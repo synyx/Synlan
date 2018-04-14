@@ -26,11 +26,15 @@ function execute (updateInterval) {
         })
 
         .then(function () {
-            return new Promise(function (resolve) {
+            return new Promise(function (resolve, reject) {
                 neo4jDb.beginTransaction(function (err, result) {
                     transactionId = result._id;
                     console.log('[Main.js] Beginned transaction with id: ' + transactionId);
-                    resolve();
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
                 });
             });
         })
@@ -69,12 +73,22 @@ function execute (updateInterval) {
                 });
             })
         })
-        
+
         .then(function () {
-            setTimeout(function () {
-                execute(updateInterval);
-            }, updateInterval)
+            restart(updateInterval);
+        })
+
+        .catch(function (error) {
+            console.log('[Main.js] execution failed with error: ' + error);
+            restart(0);
         });
+}
+
+
+function restart (updateInterval) {
+    setTimeout(function () {
+        execute(updateInterval);
+    }, updateInterval);
 }
 
 module.exports = {
